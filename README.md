@@ -39,7 +39,7 @@ Some of the benchmark datasets are available at:
 ## Example
 
 ```bash
-./bin/kmeans -f covtype.txt -k 10
+./bin/kmeans -f Epileptic.txt -k 10
 ```
 
 ## Dataset Format
