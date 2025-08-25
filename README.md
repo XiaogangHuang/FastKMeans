@@ -26,7 +26,7 @@ The executable will be generated under `./bin/`.
 
 
 ## Compared algorithms
-We compared the following algorithms:
+We compare the following algorithms:
 | __Algorithm__ | __Paper__ |
 |-------------|------------|
 |Lloyd  |   Least squares quantization in PCM|
