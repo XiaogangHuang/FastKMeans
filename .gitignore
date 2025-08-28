@@ -1,0 +1,5 @@
+# 忽略 Data 文件夹下的所有内容
+Data/
+
+# 忽略 VSCode 配置目录
+.vscode/
