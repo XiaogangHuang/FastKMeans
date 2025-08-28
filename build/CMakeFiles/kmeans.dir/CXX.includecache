@@ -120,18 +120,6 @@ DADC.h
 kmeans.h
 ../include/kmeans.h
 
-/home/hxg/Code/VSC/fast-kmeans/src/adaptive_kmeans_v2.cpp
-adaptive_kmeans_v2.h
-/home/hxg/Code/VSC/fast-kmeans/src/adaptive_kmeans_v2.h
-
-/home/hxg/Code/VSC/fast-kmeans/src/adaptive_kmeans_v2_pca.cpp
-adaptive_kmeans_v2_pca.h
-/home/hxg/Code/VSC/fast-kmeans/src/adaptive_kmeans_v2_pca.h
-
-/home/hxg/Code/VSC/fast-kmeans/src/elkan_kmeans.cpp
-elkan_kmeans.h
-/home/hxg/Code/VSC/fast-kmeans/src/elkan_kmeans.h
-
 /home/hxg/Code/VSC/fast-kmeans/src/test.cpp
 filesystem
 -
@@ -161,8 +149,4 @@ exp.h
 /home/hxg/Code/VSC/fast-kmeans/src/exp.h
 heap.h
 /home/hxg/Code/VSC/fast-kmeans/src/heap.h
-
-/home/hxg/Code/VSC/fast-kmeans/src/yykmeans.cpp
-yykmeans.h
-/home/hxg/Code/VSC/fast-kmeans/src/yykmeans.h
 
