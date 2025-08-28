@@ -1,12 +1,6 @@
 #pragma once
 #include "DADC.h"
 
-// struct LowerBound
-// {
-//     point_coord_type first_lower;
-//     point_coord_type second_lower;
-//     size_t first_index;
-// };
 
 class AdaptiveKmeansV2
 {
@@ -16,8 +10,6 @@ public:
 
     void setInitialCentroids(const Matrix<point_coord_type> &initial_centroids);
     void fit(const Matrix<point_coord_type> &data);
-    // void fit_ns(const Matrix<point_coord_type> &data);
-    // void fit_2lowers(const Matrix<point_coord_type> &data);
 
     size_t getFeatureCnt() const { return feature_cnt; }
     [[nodiscard]] const std::vector<size_t> getLabels() const
@@ -57,14 +49,6 @@ private:
     void assignPoints(const Matrix<point_coord_type> &data);
     bool recalculateCentroids();
 
-    // void init_ns(const Matrix<point_coord_type> &data);
-    // void assignPoints_ns(const Matrix<point_coord_type> &data);
-    // bool recalculateCentroids_ns();
-
-    // void init_2lowers(const Matrix<point_coord_type> &data);
-    // void init_group_generation_2lowers(const Matrix<point_coord_type> &data);
-    // void assignPoints_2lowers(const Matrix<point_coord_type> &data);
-
     // 基本参数
     size_t k;            // 聚类数
     size_t numGroups;    // 组数
@@ -89,14 +73,4 @@ private:
     std::vector<Matrix<size_t>> group_index;
     Matrix<point_coord_type> group_lowers; // 下界矩阵
     Matrix<point_coord_type> div_group;    // 组内中心点移动距离
-
-    // Matrix<LowerBound> group_lowers_new;   // 下界矩阵
-    // // Norm of sum版本
-    // std::vector<point_coord_type> div_global;
-    // std::vector<point_coord_type> globallowers_at_last;
-    // std::vector<size_t> tau_globallowers;
-    // std::vector<Matrix<point_coord_type>> centroids_history;
-    // Matrix<point_coord_type> div_ns;
-    // std::vector<Matrix<point_coord_type>> div_ns_g;
-    // Matrix<size_t> timestamp;
 };

@@ -13,9 +13,8 @@ public:
     void setInitialCentroids(const Matrix<point_coord_type> &initial_centroids);
     void fit(const Matrix<point_coord_type> &data);
     void fit_stepwise(const Matrix<point_coord_type> &data, size_t &dim);
-    void fit_ns(const Matrix<point_coord_type> &data);
-    void fit_ns_stepwise(const Matrix<point_coord_type> &data, size_t &dim);
 
+    
     std::vector<size_t> getLabels();
     [[nodiscard]] size_t getIterations() const { return iterations; }
     [[nodiscard]] size_t getNumDistances() const { return numDistances; }
@@ -39,13 +38,6 @@ public:
         bytes += getMatrixMemoryBytes(sums);
         bytes += sizeof(Point) * points.capacity();
         bytes += sizeof(Center) * centers.capacity();
-        for (const auto &hist : centroids_history)
-        {
-            bytes += getMatrixMemoryBytes(hist);
-        }
-        bytes += getMatrixMemoryBytes(timestamp);
-        bytes += getMatrixMemoryBytes(div_ns);
-        bytes += getMatrixMemoryBytes(div_ns_g);
         bytes += getMatrixMemoryBytes(group_lowers);
         bytes += getVectorMemoryBytes(groupparts);
         bytes += getVectorMemoryBytes(point_normSquares);
@@ -53,9 +45,6 @@ public:
         bytes += getVectorMemoryBytes(group);
         bytes += getVectorMemoryBytes(div_center);
         bytes += getVectorMemoryBytes(div_group);
-        bytes += getVectorMemoryBytes(div_global);
-        bytes += getVectorMemoryBytes(globallowers_at_last);
-        bytes += getVectorMemoryBytes(tau_globallowers);
 
         return static_cast<point_coord_type>(bytes) / (1024.0 * 1024.0);
     }
@@ -66,16 +55,6 @@ private:
     void recalculateCentroids();
 
     bool assignPoints_stepwise(const Matrix<point_coord_type> &data);
-
-    // Norm of sum version
-    void init_ns(const Matrix<point_coord_type> &data);
-    bool assignPoints_ns_first_iter(const Matrix<point_coord_type> &data);
-    void recalculateCentroids_ns_first_iter();
-    bool assignPoints_ns(const Matrix<point_coord_type> &data);
-    void recalculateCentroids_ns();
-
-    bool assignPoints_ns_first_iter_stepwise(const Matrix<point_coord_type> &data);
-    bool assignPoints_ns_stepwise(const Matrix<point_coord_type> &data);
 
     // 基本参数
     size_t k;            // 聚类数
@@ -102,16 +81,6 @@ private:
 
     std::vector<point_coord_type> div_center; // 中心点移动距离[k]
     std::vector<point_coord_type> div_group;
-
-    // Norm of sum版本
-    std::vector<point_coord_type> div_global;
-    std::vector<point_coord_type> globallowers_at_last;
-
-    std::vector<Matrix<point_coord_type>> centroids_history;
-    Matrix<point_coord_type> div_ns;
-    Matrix<point_coord_type> div_ns_g;
-    Matrix<size_t> timestamp;
-    std::vector<size_t> tau_globallowers;
 
     std::chrono::milliseconds assign_time;
     std::chrono::milliseconds update_time;

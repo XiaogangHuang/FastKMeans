@@ -5,7 +5,6 @@
 #include "ball_kmeans.h"
 #include "elkan_kmeans.h"
 #include "hamerly_kmeans.h"
-#include "usim_elkan_kmeans.h"
 #include "yykmeans.h"
 #include "adaptive_kmeans_v2.h"
 #include "adaptive_kmeans_v2_pca.h"
@@ -140,7 +139,7 @@ int main(int argc, char *argv[])
         parseAndValidateArguments(argc, argv, alg, filename, rs_seed, read_pca_from_file, read_centroids_from_file, k, ub, percent, pca_dim);
 
         // 读取数据
-        std::cout << "Reading (generating) data and initial class center..." << std::endl;
+        std::cout << "Reading (generating) data and initial centroids..." << std::endl;
         Matrix<point_coord_type> data;
         if (filename.size() >= 6 && filename.substr(filename.size() - 6) == ".fvecs")
         {
@@ -168,7 +167,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::cout << "Use k-means++ to generate initial centroids(" << rs_seed << ")" << std::endl;
+            std::cout << "Using k-means++ to generate initial centroids(" << rs_seed << ")" << std::endl;
             initial_centroids = initializeCentroidsKMeansPlusPlus(data, init_centroids, k, rs_seed);
         }
 
@@ -264,82 +263,108 @@ int main(int argc, char *argv[])
         point_coord_type pca_data_memory_usage = 1.0 * getMatrixMemoryBytes(pca_data) / (1024.0 * 1024.0);
         if (alg == "")
         {
-            KMeans kmeans(k);
-            run_and_report("K-means", kmeans, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(kmeans.getLabels(), "../result/kmeans_labels.txt");
+            {
+                KMeans kmeans(k);
+                run_and_report("K-means", kmeans, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(kmeans.getLabels(), "../result/kmeans_labels.txt");
+            }
 
-            HamerlyKmeans hamerlyKmeans(k);
-            run_and_report("Hamerly K-means", hamerlyKmeans, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(hamerlyKmeans.getLabels(), "../result/hamerly_kmeans_labels.txt");
+            {
+                HamerlyKmeans hamerlyKmeans(k);
+                run_and_report("Hamerly K-means", hamerlyKmeans, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(hamerlyKmeans.getLabels(), "../result/hamerly_kmeans_labels.txt");
+            }
+            
+            {
+                HeapKmeans heapKmeans;
+                run_and_report("Heap K-means", heapKmeans, [&](auto &a)
+                            { a.initialize(data, initial_centroids, k); }, [&](auto &a)
+                            { a.fit(); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(heapKmeans.getLabels(), "../result/heap_kmeans_labels.txt");
+            }
 
-            HeapKmeans heapKmeans;
-            run_and_report("Heap K-means", heapKmeans, [&](auto &a)
-                           { a.initialize(data, initial_centroids, k); }, [&](auto &a)
-                           { a.fit(); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(heapKmeans.getLabels(), "../result/heap_kmeans_labels.txt");
+            {
+                ExponionKmeans expKmeansNS(k);
+                run_and_report("Exponion K-means(ns)", expKmeansNS, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit_ns(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(expKmeansNS.getLabels(), "../result/exp_kmeans_labels.txt");
+            }
 
-            ExponionKmeans expKmeansNS(k);
-            run_and_report("Exponion K-means(ns)", expKmeansNS, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit_ns(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(expKmeansNS.getLabels(), "../result/exp_kmeans_labels.txt");
+            {
+                BallKmeans ballKmeans(data, k);
+                run_and_report("Ball K-means", ballKmeans, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(ballKmeans.getLabels(), "../result/ball_kmeans_labels.txt");
+            }
 
-            BallKmeans ballKmeans(data, k);
-            run_and_report("Ball K-means", ballKmeans, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(ballKmeans.getLabels(), "../result/ball_kmeans_labels.txt");
+            {
+                YinYangKmeans yykmeans(k);
+                run_and_report("Yinyang K-means", yykmeans, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(yykmeans.getLabels(), "../result/yinyang_kmeans_labels.txt");
+            }
 
-            YinYangKmeans yykmeans(k);
-            run_and_report("Yinyang K-means", yykmeans, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(yykmeans.getLabels(), "../result/yinyang_kmeans_labels.txt");
+            {
+                BVKmeans bvkmeans(k);
+                run_and_report("BV K-means", bvkmeans, [&](auto &a)
+                            { a.setInitialCentroids(perc_bv, initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(bvkmeans.getLabels(), "../result/bv_kmeans_labels.txt");
+            }
 
-            BVKmeans bvkmeans(k);
-            run_and_report("BV K-means", bvkmeans, [&](auto &a)
-                           { a.setInitialCentroids(perc_bv, initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(bvkmeans.getLabels(), "../result/bv_kmeans_labels.txt");
+            {
+                ElkanKmeans elkanKmeans(k);
+                run_and_report("Elkan K-means", elkanKmeans, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(elkanKmeans.getLabels(), "../result/elkan_kmeans_labels.txt");
+            }
 
-            ElkanKmeans elkanKmeans(k);
-            run_and_report("Elkan K-means", elkanKmeans, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(elkanKmeans.getLabels(), "../result/elkan_kmeans_labels.txt");
+            {
+                MarigoldKmeans marigold(k, data, initial_centroids);
+                run_and_report("Marigold K-means", marigold, [](auto & /*unused*/) {}, [](auto &a)
+                            { a.runKmeans(); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(marigold.getLabels(), "../result/marigold_kmeans_labels.txt");
+            }
 
-            MarigoldKmeans marigold(k, data, initial_centroids);
-            run_and_report("Marigold K-means", marigold, [](auto & /*unused*/) {}, [](auto &a)
-                           { a.runKmeans(); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(marigold.getLabels(), "../result/marigold_kmeans_labels.txt");
+            {
+                AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
+                run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(adaptivekmeansv2.getLabels(), "../result/adaptive_kmeans_labels.txt");
+            }
 
-            AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
-            run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(adaptivekmeansv2.getLabels(), "../result/adaptive_kmeans_labels.txt");
-
-            AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
-            run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
-                           { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
-                           { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
-            // saveLabelsToFile(adaptivekmeansv2PCA.getLabels(), "../result/adaptive_kmeans_v2_pca_labels.txt");
+            {
+                AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
+                run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
+                            { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
+                            { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
+                // saveLabelsToFile(adaptivekmeansv2PCA.getLabels(), "../result/adaptive_kmeans_v2_pca_labels.txt");
+            }
         }
         else if (alg == "adaptive")
         {
-            AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
-            run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
-                           { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                           { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+            // {
+            //     AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
+            //     run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
+            //                 { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+            //                 { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+            // }
 
-            AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
-            run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
-                           { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
-                           { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
+            {
+                AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
+                run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
+                            { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
+                            { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
+            }
         }
         else if (alg == "exp")
         {

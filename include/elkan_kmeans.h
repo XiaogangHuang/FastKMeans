@@ -12,8 +12,6 @@ public:
     void setInitialCentroids(const Matrix<point_coord_type> &initial_centroids, size_t dim = 0);
     void fit(const Matrix<point_coord_type> &data);
     void fit_stepwise(const Matrix<point_coord_type> &data);
-    void fit_simplified(const Matrix<point_coord_type> &data);
-    void fit_ns(const Matrix<point_coord_type> &data);
 
     size_t getFeatureCnt() const { return feature_cnt; }
     [[nodiscard]] const std::vector<size_t> &getLabels() const { return labels; }
@@ -31,11 +29,6 @@ public:
         bytes += getVectorMemoryBytes(centroid_normSquares);
         bytes += getVectorMemoryBytes(labels);
         bytes += getVectorMemoryBytes(cluster_count);
-        bytes += getMatrixMemoryBytes(timestamp);
-        for (const auto &hist : centroids_history)
-        {
-            bytes += getMatrixMemoryBytes(hist);
-        }
         bytes += getMatrixMemoryBytes(div_ns);
         bytes += getMatrixMemoryBytes(l_elkan);
         bytes += getVectorMemoryBytes(u_elkan);
@@ -55,13 +48,6 @@ private:
 
     void assignPoints_stepwise(const Matrix<point_coord_type> &data);
 
-    void assignPoints_simplified(const Matrix<point_coord_type> &data);
-    void init_simplified(const Matrix<point_coord_type> &data);
-    void updateBounds_simplified();
-
-    bool assignPoints_ns(const Matrix<point_coord_type> &data);
-    void recalculateCentroids_ns();
-    void init_ns(const Matrix<point_coord_type> &data);
 
     // 基本参数
     size_t k;            // 聚类数
@@ -80,8 +66,6 @@ private:
     std::vector<point_coord_type> centroid_normSquares;
     std::vector<size_t> labels;        // 点的分配标签
     std::vector<size_t> cluster_count; // 每个簇的点数
-    Matrix<size_t> timestamp;
-    std::vector<Matrix<point_coord_type>> centroids_history;
 
     // Elkan算法特有的数据结构
     Matrix<point_coord_type> div_ns;
