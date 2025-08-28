@@ -493,33 +493,6 @@ src/test.cpp.s:
 	$(MAKE) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/src/test.cpp.s
 .PHONY : src/test.cpp.s
 
-src/usim_elkan_kmeans.o: src/usim_elkan_kmeans.cpp.o
-
-.PHONY : src/usim_elkan_kmeans.o
-
-# target to build an object file
-src/usim_elkan_kmeans.cpp.o:
-	$(MAKE) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o
-.PHONY : src/usim_elkan_kmeans.cpp.o
-
-src/usim_elkan_kmeans.i: src/usim_elkan_kmeans.cpp.i
-
-.PHONY : src/usim_elkan_kmeans.i
-
-# target to preprocess a source file
-src/usim_elkan_kmeans.cpp.i:
-	$(MAKE) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.i
-.PHONY : src/usim_elkan_kmeans.cpp.i
-
-src/usim_elkan_kmeans.s: src/usim_elkan_kmeans.cpp.s
-
-.PHONY : src/usim_elkan_kmeans.s
-
-# target to generate assembly for a file
-src/usim_elkan_kmeans.cpp.s:
-	$(MAKE) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.s
-.PHONY : src/usim_elkan_kmeans.cpp.s
-
 src/yykmeans.o: src/yykmeans.cpp.o
 
 .PHONY : src/yykmeans.o
@@ -596,9 +569,6 @@ help:
 	@echo "... src/test.o"
 	@echo "... src/test.i"
 	@echo "... src/test.s"
-	@echo "... src/usim_elkan_kmeans.o"
-	@echo "... src/usim_elkan_kmeans.i"
-	@echo "... src/usim_elkan_kmeans.s"
 	@echo "... src/yykmeans.o"
 	@echo "... src/yykmeans.i"
 	@echo "... src/yykmeans.s"

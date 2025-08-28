@@ -16,7 +16,6 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/hxg/Code/VSC/fast-kmeans/src/marigold.cpp" "/home/hxg/Code/VSC/fast-kmeans/build/CMakeFiles/kmeans.dir/src/marigold.cpp.o"
   "/home/hxg/Code/VSC/fast-kmeans/src/pca.cpp" "/home/hxg/Code/VSC/fast-kmeans/build/CMakeFiles/kmeans.dir/src/pca.cpp.o"
   "/home/hxg/Code/VSC/fast-kmeans/src/test.cpp" "/home/hxg/Code/VSC/fast-kmeans/build/CMakeFiles/kmeans.dir/src/test.cpp.o"
-  "/home/hxg/Code/VSC/fast-kmeans/src/usim_elkan_kmeans.cpp" "/home/hxg/Code/VSC/fast-kmeans/build/CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o"
   "/home/hxg/Code/VSC/fast-kmeans/src/yykmeans.cpp" "/home/hxg/Code/VSC/fast-kmeans/build/CMakeFiles/kmeans.dir/src/yykmeans.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

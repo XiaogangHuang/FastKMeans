@@ -66,15 +66,9 @@ CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/heap.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/kmeans.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/marigold.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/pca.h
-CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/usim_elkan_kmeans.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/utils.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../include/yykmeans.h
 CMakeFiles/kmeans.dir/src/test.cpp.o: ../src/test.cpp
-
-CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o: ../include/DADC.h
-CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o: ../include/usim_elkan_kmeans.h
-CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o: ../include/utils.h
-CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o: ../src/usim_elkan_kmeans.cpp
 
 CMakeFiles/kmeans.dir/src/yykmeans.cpp.o: ../include/DADC.h
 CMakeFiles/kmeans.dir/src/yykmeans.cpp.o: ../include/kmeans.h

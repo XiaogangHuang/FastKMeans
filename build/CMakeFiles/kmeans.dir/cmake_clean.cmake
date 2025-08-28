@@ -11,7 +11,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/kmeans.dir/src/marigold.cpp.o"
   "CMakeFiles/kmeans.dir/src/pca.cpp.o"
   "CMakeFiles/kmeans.dir/src/test.cpp.o"
-  "CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o"
   "CMakeFiles/kmeans.dir/src/yykmeans.cpp.o"
   "bin/kmeans"
   "bin/kmeans.pdb"

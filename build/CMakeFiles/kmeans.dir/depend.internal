@@ -67,15 +67,9 @@ CMakeFiles/kmeans.dir/src/test.cpp.o
  ../include/kmeans.h
  ../include/marigold.h
  ../include/pca.h
- ../include/usim_elkan_kmeans.h
  ../include/utils.h
  ../include/yykmeans.h
  /home/hxg/Code/VSC/fast-kmeans/src/test.cpp
-CMakeFiles/kmeans.dir/src/usim_elkan_kmeans.cpp.o
- ../include/DADC.h
- ../include/usim_elkan_kmeans.h
- ../include/utils.h
- /home/hxg/Code/VSC/fast-kmeans/src/usim_elkan_kmeans.cpp
 CMakeFiles/kmeans.dir/src/yykmeans.cpp.o
  ../include/DADC.h
  ../include/kmeans.h
