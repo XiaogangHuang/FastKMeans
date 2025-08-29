@@ -1,6 +1,6 @@
 # FastKMeans
 
-FastKMeans is a high-performance implementation of the Lloyd's algorithm.
+FastKMeans is a high-performance implementation of Lloyd's algorithm.
 
 ## Experimental Environment
 
