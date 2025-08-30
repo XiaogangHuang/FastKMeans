@@ -3,3 +3,6 @@ Data/
 
 # 忽略 VSCode 配置目录
 .vscode/
+
+# 忽略 build 文件夹下的所有内容
+build/
