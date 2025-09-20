@@ -1,5 +1,4 @@
-# === Project-specific ===
-Data/
+# === Project-specific === 
 .vscode/
 build/
 
