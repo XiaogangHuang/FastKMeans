@@ -1,0 +1,34 @@
+# === Project-specific ===
+Data/
+.vscode/
+build/
+
+# === CMake / Make ===
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# === 编译产物 ===
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.lib
+*.so
+*.so.*
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+
+# === 日志 / 临时文件 ===
+*.log
+*.tmp
+*.swp
+*.DS_Store
+
