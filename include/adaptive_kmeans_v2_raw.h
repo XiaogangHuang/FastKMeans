@@ -2,11 +2,11 @@
 #include "DADC.h"
 #include "kmeans.h"
 
-class AdaptiveKmeansV2Lloyd
+class AdaptiveKmeansV2Raw
 {
 public:
-    AdaptiveKmeansV2Lloyd(size_t k, size_t ub);
-    ~AdaptiveKmeansV2Lloyd();
+    AdaptiveKmeansV2Raw(size_t k, size_t ub);
+    ~AdaptiveKmeansV2Raw();
 
     void setInitialCentroids(const Matrix<point_coord_type> &initial_centroids);
     void fit(const Matrix<point_coord_type> &data);

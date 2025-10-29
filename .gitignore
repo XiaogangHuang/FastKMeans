@@ -10,6 +10,9 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 
+# === 数据文件 ===
+Data/
+
 # === 编译产物 ===
 *.o
 *.obj

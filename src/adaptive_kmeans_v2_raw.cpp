@@ -1,7 +1,7 @@
-#include "adaptive_kmeans_v2_lloyd.h"
+#include "adaptive_kmeans_v2_raw.h"
 #include <random>
 
-AdaptiveKmeansV2Lloyd::AdaptiveKmeansV2Lloyd(size_t k, size_t ub) : k(k), iterations(0), numDistances(0), n(0), d(0),
+AdaptiveKmeansV2Raw::AdaptiveKmeansV2Raw(size_t k, size_t ub) : k(k), iterations(0), numDistances(0), n(0), d(0),
                                                                     assign_time{0}, update_time{0}
 {
     size_t cnt = 0;
@@ -21,9 +21,9 @@ AdaptiveKmeansV2Lloyd::AdaptiveKmeansV2Lloyd(size_t k, size_t ub) : k(k), iterat
     }
 }
 
-AdaptiveKmeansV2Lloyd::~AdaptiveKmeansV2Lloyd() {}
+AdaptiveKmeansV2Raw::~AdaptiveKmeansV2Raw() {}
 
-std::vector<size_t> AdaptiveKmeansV2Lloyd::getLabels()
+std::vector<size_t> AdaptiveKmeansV2Raw::getLabels()
 {
     std::vector<size_t> labels(n, 0);
     for (size_t i = 0; i < n; ++i)
@@ -33,14 +33,14 @@ std::vector<size_t> AdaptiveKmeansV2Lloyd::getLabels()
     return labels;
 }
 
-void AdaptiveKmeansV2Lloyd::setInitialCentroids(const Matrix<point_coord_type> &initial_centroids)
+void AdaptiveKmeansV2Raw::setInitialCentroids(const Matrix<point_coord_type> &initial_centroids)
 {
     centroids = initial_centroids;
     old_centroids = initial_centroids;
     d = centroids[0].size();
 }
 
-void AdaptiveKmeansV2Lloyd::fit(const Matrix<point_coord_type> &data)
+void AdaptiveKmeansV2Raw::fit(const Matrix<point_coord_type> &data)
 {
     auto start = std::chrono::high_resolution_clock::now();
     init(data);
@@ -62,7 +62,7 @@ void AdaptiveKmeansV2Lloyd::fit(const Matrix<point_coord_type> &data)
     }
 }
 
-void AdaptiveKmeansV2Lloyd::init(const Matrix<point_coord_type> &data)
+void AdaptiveKmeansV2Raw::init(const Matrix<point_coord_type> &data)
 {
     n = data.size();
     d = data[0].size();
@@ -134,7 +134,7 @@ void AdaptiveKmeansV2Lloyd::init(const Matrix<point_coord_type> &data)
     centroids = std::move(sorted_centroids);
 }
 
-bool AdaptiveKmeansV2Lloyd::assignPoints(const Matrix<point_coord_type> &data)
+bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
 {
     for (size_t i = 0; i < k; i++)
     {
@@ -243,7 +243,7 @@ bool AdaptiveKmeansV2Lloyd::assignPoints(const Matrix<point_coord_type> &data)
     return converged;
 }
 
-void AdaptiveKmeansV2Lloyd::recalculateCentroids()
+void AdaptiveKmeansV2Raw::recalculateCentroids()
 {
     std::swap(old_centroids, centroids);
 

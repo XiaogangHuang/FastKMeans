@@ -81,6 +81,22 @@ struct AdaptPointV4
     size_t label;
 };
 
+struct AdaptPointV5
+{
+    point_coord_type distance;
+    size_t init_clust;
+    size_t group;
+    size_t label;
+};
+
+struct NormSquareV5
+{
+    point_coord_type total_normSquare;
+    point_coord_type mu;
+    point_coord_type sigma;
+    // point_coord_type angle;
+};
+
 // 简单三元组结构存储稀疏矩阵非零元素
 template <typename T>
 struct SparseMatrix

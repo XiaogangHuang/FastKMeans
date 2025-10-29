@@ -1,6 +1,6 @@
-#include "adaptive_kmeans_v2_pca.h"
+#include "adaptive_kmeans_v2_dag.h"
 
-AdaptiveKmeansV2PCA::AdaptiveKmeansV2PCA(size_t k, size_t ub)
+AdaptiveKmeansV2DAG::AdaptiveKmeansV2DAG(size_t k, size_t ub)
     : k(k), iterations(1), numDistances(0), n(0), d(0)
 {
     size_t cnt = 0;
@@ -33,11 +33,55 @@ AdaptiveKmeansV2PCA::AdaptiveKmeansV2PCA(size_t k, size_t ub)
     group_size.back() -= cnt - k;
 }
 
-AdaptiveKmeansV2PCA::~AdaptiveKmeansV2PCA()
+AdaptiveKmeansV2DAG::~AdaptiveKmeansV2DAG()
 {
 }
 
-void AdaptiveKmeansV2PCA::rearrange_centroids()
+void AdaptiveKmeansV2DAG::setInitialCentroids(const Matrix<point_coord_type> &initial_centroids)
+{
+    centroids = initial_centroids;
+    centroid_normSquares.resize(k, 0.0);
+    for (size_t i = 0; i < k; i++)
+    {
+        point_coord_type temp = innerProduct(initial_centroids[i]);
+        centroid_normSquares[i] = temp;
+    }
+    old_centroids = initial_centroids;
+    numDistances = 0;
+}
+
+void AdaptiveKmeansV2DAG::fit(const Matrix<point_coord_type> &data)
+{
+    init(data);
+    while (!recalculateCentroids())
+    {
+        assignPoints(data);
+        iterations++;
+    }
+}
+
+void AdaptiveKmeansV2DAG::init(const Matrix<point_coord_type> &data)
+{
+    n = data.size();
+    d = data[0].size();
+    feature_cnt = 0;
+
+    // 初始化数据结构
+    div.resize(k, 0);
+    cluster_count.resize(k, 0);
+    sums.resize(k, std::vector<point_coord_type>(d, 0.0));
+    div_group.resize(k, std::vector<point_coord_type>(numGroups, 0.0));
+    points.resize(n, AdaptPointV1{std::numeric_limits<point_coord_type>::max(), 0.0, 0, 0, 0});
+    for (size_t i = 0; i < n; i++)
+    {
+        point_coord_type temp = innerProduct(data[i]);
+        points[i].total_normSquare = temp;
+    }
+    rearrange_centroids();
+    init_group_generation(data);
+}
+
+void AdaptiveKmeansV2DAG::rearrange_centroids()
 {
     Matrix<point_coord_type> dists(k, std::vector<point_coord_type>(k, 0.0));
     for (size_t i = 0; i < k; i++)
@@ -46,7 +90,7 @@ void AdaptiveKmeansV2PCA::rearrange_centroids()
         {
             numDistances++;
             feature_cnt += d;
-            point_coord_type dist = euclidean_dist_square(centroids[i], centroids[j], centroid_normSquares[i].total_normSquare, centroid_normSquares[j].total_normSquare);
+            point_coord_type dist = euclidean_dist_square(centroids[i], centroids[j], centroid_normSquares[i], centroid_normSquares[j]);
             dists[i][j] = dist;
             dists[j][i] = dist;
         }
@@ -112,7 +156,7 @@ void AdaptiveKmeansV2PCA::rearrange_centroids()
               {
                   return a[0][0] < b[0][0];
               });
-    std::vector<CentroidNormSquareV2> centroid_normSquares_new(k);
+    std::vector<point_coord_type> centroid_normSquares_new(k);
     for (size_t i = 0; i < k; i++)
     {
         old_centroids[indices[i]] = centroids[i];
@@ -122,75 +166,7 @@ void AdaptiveKmeansV2PCA::rearrange_centroids()
     std::swap(centroid_normSquares, centroid_normSquares_new);
 }
 
-void AdaptiveKmeansV2PCA::setInitialCentroids(const Matrix<point_coord_type> &initial_centroids, const size_t dim)
-{
-    pca_dim = dim;
-    centroids = initial_centroids;
-    centroid_normSquares.resize(k, CentroidNormSquareV2{0.0, 0.0});
-    for (size_t i = 0; i < k; i++)
-    {
-        point_coord_type temp = innerProduct(initial_centroids[i],
-                                             centroid_normSquares[i].rest_norm, pca_dim);
-        centroid_normSquares[i].total_normSquare = temp;
-    }
-    old_centroids = initial_centroids;
-    numDistances = 0;
-}
-
-void AdaptiveKmeansV2PCA::fit(const Matrix<point_coord_type> &data)
-{
-    init(data);
-    while (!recalculateCentroids())
-    {
-        assignPoints(data);
-        iterations++;
-    }
-    // auto start = std::chrono::high_resolution_clock::now();
-    // init(data);
-    // auto end = std::chrono::high_resolution_clock::now();
-    // assign_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-
-    // // verifyCentroids(data);
-    // while (true)
-    // {
-    //     start = std::chrono::high_resolution_clock::now();
-    //     bool converged = recalculateCentroids();
-    //     end = std::chrono::high_resolution_clock::now();
-    //     update_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    //     if (converged)
-    //     {
-    //         break;
-    //     }
-    //     start = std::chrono::high_resolution_clock::now();
-    //     assignPoints(data);
-    //     end = std::chrono::high_resolution_clock::now();
-    //     assign_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    //     iterations++;
-    // }
-}
-
-void AdaptiveKmeansV2PCA::init(const Matrix<point_coord_type> &data)
-{
-    n = data.size();
-    d = data[0].size();
-    feature_cnt = 0;
-
-    // 初始化数据结构
-    div_group.resize(k, std::vector<point_coord_type>(numGroups, 0.0));
-    div.resize(k, 0);
-    cluster_count.resize(k, 0);
-    points.resize(n, AdaptPointV2{std::numeric_limits<point_coord_type>::max(), 0.0, 0.0, 0, 0, 0});
-    for (size_t i = 0; i < n; i++)
-    {
-        point_coord_type temp = innerProduct(data[i], points[i].rest_norm, pca_dim);
-        points[i].total_normSquare = temp;
-    }
-    sums.resize(k, std::vector<point_coord_type>(d, 0.0));
-    rearrange_centroids();
-    init_group_generation(data);
-}
-
-void AdaptiveKmeansV2PCA::init_group_generation(const Matrix<point_coord_type> &data)
+void AdaptiveKmeansV2DAG::init_group_generation(const Matrix<point_coord_type> &data)
 {
     group_lowers.resize(n, std::vector<point_coord_type>(numGroups, 0.0));
     std::vector<point_coord_type> dist_vec(k);
@@ -201,9 +177,8 @@ void AdaptiveKmeansV2PCA::init_group_generation(const Matrix<point_coord_type> &
         for (size_t j = 0; j < k; j++)
         {
             numDistances++;
-            point_coord_type dist = dist_comp(data[i], centroids[j], points[i],
-                                              centroid_normSquares[j], min_dist, pca_dim, feature_cnt);
-
+            feature_cnt += d;
+            point_coord_type dist = euclidean_dist_square(data[i], centroids[j], points[i].total_normSquare, centroid_normSquares[j]);
             dist_vec[j] = dist;
             if (dist < min_dist)
             {
@@ -219,15 +194,13 @@ void AdaptiveKmeansV2PCA::init_group_generation(const Matrix<point_coord_type> &
         {
             sums[labels_i][j] += data[i][j];
         }
-
         group_lowers[i][0] = std::numeric_limits<point_coord_type>::max();
         for (size_t j = 1; j < numGroups; j++)
         {
-            auto &vec = group_index[labels_i][j];
             min_dist = std::numeric_limits<point_coord_type>::max();
-            for (size_t gi = 0; gi < vec.size(); gi++)
+            for (size_t gi = 0; gi < group_index[labels_i][j].size(); gi++)
             {
-                size_t clust = vec[gi];
+                size_t clust = group_index[labels_i][j][gi];
                 if (dist_vec[clust] < min_dist)
                 {
                     min_dist = dist_vec[clust];
@@ -238,7 +211,7 @@ void AdaptiveKmeansV2PCA::init_group_generation(const Matrix<point_coord_type> &
     }
 }
 
-void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
+void AdaptiveKmeansV2DAG::assignPoints(const Matrix<point_coord_type> &data)
 {
     for (size_t i = 0; i < n; ++i)
     {
@@ -254,14 +227,14 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
             if (val < globallower)
                 globallower = val;
         }
+
         size_t old_label = point.label;
         point.distance += div[old_label];
         if (globallower < point.distance)
         {
             numDistances++;
             feature_cnt += d;
-            point_coord_type thresh = point.total_normSquare + centroid_normSquares[old_label].total_normSquare - 2 * innerProduct(data[i], centroids[old_label], pca_dim);
-            point.distance = thresh > 0 ? std::sqrt(thresh) : 0.0;
+            point.distance = euclidean_dist(data[i], centroids[old_label], point.total_normSquare, centroid_normSquares[old_label]);
             for (size_t gi = 0; gi < numGroups; gi++)
             {
                 if (group_lower_row[gi] >= point.distance)
@@ -273,9 +246,8 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
                 for (size_t clust : group_index[point.init_clust][gi])
                 {
                     numDistances++;
-                    point_coord_type adist = dist_comp(data[i], centroids[clust], point,
-                                                       centroid_normSquares[clust], thresh, pca_dim, feature_cnt);
-
+                    feature_cnt += d;
+                    point_coord_type adist = euclidean_dist_square(data[i], centroids[clust], point.total_normSquare, centroid_normSquares[clust]);
                     if (adist < group_nearest)
                     {
                         group_second_nearest = group_nearest;
@@ -288,22 +260,6 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
                     }
                 }
                 group_nearest = std::sqrt(group_nearest);
-                // if (group_nearest <= point.distance)
-                // {
-                //     if (point.group != gi)
-                //     {
-                //         group_lower_row[point.group] = std::min(group_lower_row[point.group], point.distance);
-                //     }
-                //     group_lower_row[gi] = std::sqrt(group_second_nearest);
-                //     thresh = group_nearest * group_nearest;
-                //     point.distance = group_nearest;
-                //     point.group = gi;
-                //     point.label = group_nearest_index;
-                // }
-                // else
-                // {
-                //     group_lower_row[gi] = group_nearest;
-                // }
                 if (point.group != gi)
                 {
                     if (group_nearest < point.distance)
@@ -313,7 +269,6 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
                             group_lower_row[point.group] = point.distance;
                         }
                         group_lower_row[gi] = std::sqrt(group_second_nearest);
-                        thresh = group_nearest * group_nearest;
                         point.distance = group_nearest;
                         point.group = gi;
                         point.label = group_nearest_index;
@@ -326,7 +281,6 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
                 else
                 {
                     group_lower_row[gi] = std::sqrt(group_second_nearest);
-                    thresh = group_nearest * group_nearest;
                     point.distance = group_nearest;
                     point.label = group_nearest_index;
                 }
@@ -348,7 +302,7 @@ void AdaptiveKmeansV2PCA::assignPoints(const Matrix<point_coord_type> &data)
     }
 }
 
-bool AdaptiveKmeansV2PCA::recalculateCentroids()
+bool AdaptiveKmeansV2DAG::recalculateCentroids()
 {
     std::swap(centroids, old_centroids);
 
@@ -358,18 +312,18 @@ bool AdaptiveKmeansV2PCA::recalculateCentroids()
         if (cluster_count[i] > 0)
         {
             point_coord_type scale = 1.0 / cluster_count[i];
+            point_coord_type normSquare = 0.0;
             for (size_t j = 0; j < d; j++)
             {
                 point_coord_type temp = sums[i][j] * scale;
                 centroids[i][j] = temp;
+                normSquare += temp * temp;
             }
             numDistances++;
             feature_cnt += d;
-            point_coord_type temp = centroid_normSquares[i].total_normSquare;
-            centroid_normSquares[i].total_normSquare = innerProduct(centroids[i],
-                                                                    centroid_normSquares[i].rest_norm, pca_dim);
-            temp += centroid_normSquares[i].total_normSquare - 2 * innerProduct(centroids[i], old_centroids[i], pca_dim);
+            point_coord_type temp = normSquare + centroid_normSquares[i] - 2 * innerProduct(centroids[i], old_centroids[i]);
             div[i] = temp > 0 ? std::sqrt(temp) : 0.0;
+            centroid_normSquares[i] = normSquare;
             sum_div += div[i];
         }
         else
@@ -396,23 +350,5 @@ bool AdaptiveKmeansV2PCA::recalculateCentroids()
             div_group[i][gi] = group_max;
         }
     }
-
     return sum_div == 0.0;
-}
-
-void AdaptiveKmeansV2PCA::verifyCentroids(const Matrix<point_coord_type> &data)
-{
-    for (size_t i = 0; i < n; i++)
-    {
-        point_coord_type temp = euclidean_dist(data[i], centroids[points[i].label],
-                                               points[i].total_normSquare, centroid_normSquares[points[i].label].total_normSquare);
-        for (size_t j = 0; j < k; j++)
-        {
-            if (i != j && temp > euclidean_dist(data[i], centroids[j], points[i].total_normSquare, centroid_normSquares[j].total_normSquare))
-            {
-                std::cout << i << " " << points[i].label << " " << j << " " << std::setprecision(20) << temp << std::endl;
-                break;
-            }
-        }
-    }
 }

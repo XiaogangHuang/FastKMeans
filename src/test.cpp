@@ -7,8 +7,8 @@
 #include "hamerly_kmeans.h"
 #include "yykmeans.h"
 #include "adaptive_kmeans_v2.h"
-#include "adaptive_kmeans_v2_pca.h"
-#include "adaptive_kmeans_v2_lloyd.h"
+#include "adaptive_kmeans_v2_raw.h"
+#include "adaptive_kmeans_v2_dag.h"
 #include "marigold.h"
 #include "bv_kmeans_v1.h"
 #include "exp.h"
@@ -337,14 +337,6 @@ int main(int argc, char *argv[])
             {
                 AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
                 run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
-                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-                // saveLabelsToFile(adaptivekmeansv2.getLabels(), "../result/adaptive_kmeans_labels.txt");
-            }
-
-            {
-                AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
-                run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
                             { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
                             { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
                 // saveLabelsToFile(adaptivekmeansv2PCA.getLabels(), "../result/adaptive_kmeans_v2_pca_labels.txt");
@@ -352,18 +344,25 @@ int main(int argc, char *argv[])
         }
         else if (alg == "adaptive")
         {
-            // {
-            //     AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
-            //     run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
-            //                 { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
-            //                 { a.fit(data); }, data_memory_usage, width_dist, width_feature);
-            // }
-
             {
-                AdaptiveKmeansV2PCA adaptivekmeansv2PCA(k, ub);
-                run_and_report("Adaptive K-means v2(PCA)", adaptivekmeansv2PCA, [&](auto &a)
+                AdaptiveKmeansV2 adaptivekmeansv2(k, ub);
+                run_and_report("Adaptive K-means v2", adaptivekmeansv2, [&](auto &a)
                             { a.setInitialCentroids(pca_centroids, pca_dim); }, [&](auto &a)
                             { a.fit(pca_data); }, pca_data_memory_usage, width_dist, width_feature);
+            }
+
+            {
+                AdaptiveKmeansV2DAG adaptivekmeansv2dag(k, ub);
+                run_and_report("Adaptive K-means v2(DAG)", adaptivekmeansv2dag, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
+            }
+
+            {
+                AdaptiveKmeansV2Raw adaptivekmeansv2raw(k, ub);
+                run_and_report("Adaptive K-means v2(RAW)", adaptivekmeansv2raw, [&](auto &a)
+                            { a.setInitialCentroids(initial_centroids); }, [&](auto &a)
+                            { a.fit(data); }, data_memory_usage, width_dist, width_feature);
             }
         }
         else if (alg == "exp")
