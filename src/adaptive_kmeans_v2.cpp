@@ -18,18 +18,6 @@ AdaptiveKmeansV2::AdaptiveKmeansV2(size_t k, size_t ub, size_t group_strategy)
         }
         group_size.push_back(sz);
         cnt += sz;
-        // if (numGroups < ub)
-        // {
-        //     size_t sz = GROUP_SIZE[numGroups++];
-        //     group_size.push_back(sz);
-        //     cnt += sz;
-        // }
-        // else
-        // {
-        //     numGroups++;
-        //     group_size.push_back(GROUP_SIZE[ub]);
-        //     cnt += GROUP_SIZE[ub];
-        // }
     }
     group_size.back() -= cnt - k;
 
@@ -74,23 +62,6 @@ void AdaptiveKmeansV2::rearrange_centroids()
             begin_it = end_it;
         }
     }
-
-    // std::vector<size_t> lpow(numGroups + 1, 0);
-    // for (size_t f = 0; f < numGroups; ++f)
-    // {
-    //     lpow[f + 1] = lpow[f] + group_size[f];
-    // }
-    // for (size_t i = 0; i < k; i++)
-    // {
-    //     auto begin_it = indices.begin();
-    //     for (int f = numGroups; f > 0; --f)
-    //     {
-    //         std::nth_element(begin_it, begin_it + lpow[f - 1],
-    //                          begin_it + lpow[f], [&](size_t a, size_t b)
-    //                          { return dists[i][a] < dists[i][b]; });
-    //         group_index[i][f - 1].assign(begin_it + lpow[f - 1], begin_it + lpow[f]);
-    //     }
-    // }
 
     size_t cnt = 0;
     for (size_t i = 0; i < numGroups; i++)
@@ -158,28 +129,6 @@ void AdaptiveKmeansV2::fit(const Matrix<point_coord_type> &data)
         assignPoints(data);
         iterations++;
     }
-    // auto start = std::chrono::high_resolution_clock::now();
-    // init(data);
-    // auto end = std::chrono::high_resolution_clock::now();
-    // assign_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-
-    // // verifyCentroids(data);
-    // while (true)
-    // {
-    //     start = std::chrono::high_resolution_clock::now();
-    //     bool converged = recalculateCentroids();
-    //     end = std::chrono::high_resolution_clock::now();
-    //     update_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    //     if (converged)
-    //     {
-    //         break;
-    //     }
-    //     start = std::chrono::high_resolution_clock::now();
-    //     assignPoints(data);
-    //     end = std::chrono::high_resolution_clock::now();
-    //     assign_time += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    //     iterations++;
-    // }
 }
 
 void AdaptiveKmeansV2::init(const Matrix<point_coord_type> &data)
@@ -308,22 +257,6 @@ void AdaptiveKmeansV2::assignPoints(const Matrix<point_coord_type> &data)
                     }
                 }
                 group_nearest = std::sqrt(group_nearest);
-                // if (group_nearest <= point.distance)
-                // {
-                //     if (point.group != gi)
-                //     {
-                //         group_lower_row[point.group] = std::min(group_lower_row[point.group], point.distance);
-                //     }
-                //     group_lower_row[gi] = std::sqrt(group_second_nearest);
-                //     thresh = group_nearest * group_nearest;
-                //     point.distance = group_nearest;
-                //     point.group = gi;
-                //     point.label = group_nearest_index;
-                // }
-                // else
-                // {
-                //     group_lower_row[gi] = group_nearest;
-                // }
                 if (point.group != gi)
                 {
                     if (group_nearest < point.distance)

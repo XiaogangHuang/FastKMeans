@@ -17,18 +17,6 @@ AdaptiveKmeansV2DAG::AdaptiveKmeansV2DAG(size_t k, size_t ub)
         }
         group_size.push_back(sz);
         cnt += sz;
-        // if (numGroups < ub)
-        // {
-        //     size_t sz = GROUP_SIZE[numGroups++];
-        //     group_size.push_back(sz);
-        //     cnt += sz;
-        // }
-        // else
-        // {
-        //     numGroups++;
-        //     group_size.push_back(GROUP_SIZE[ub]);
-        //     cnt += GROUP_SIZE[ub];
-        // }
     }
     group_size.back() -= cnt - k;
 }
@@ -112,23 +100,6 @@ void AdaptiveKmeansV2DAG::rearrange_centroids()
             begin_it = end_it;
         }
     }
-
-    // std::vector<size_t> lpow(numGroups + 1, 0);
-    // for (size_t f = 0; f < numGroups; ++f)
-    // {
-    //     lpow[f + 1] = lpow[f] + group_size[f];
-    // }
-    // for (size_t i = 0; i < k; i++)
-    // {
-    //     auto begin_it = indices.begin();
-    //     for (int f = numGroups; f > 0; --f)
-    //     {
-    //         std::nth_element(begin_it, begin_it + lpow[f - 1],
-    //                          begin_it + lpow[f], [&](size_t a, size_t b)
-    //                          { return dists[i][a] < dists[i][b]; });
-    //         group_index[i][f - 1].assign(begin_it + lpow[f - 1], begin_it + lpow[f]);
-    //     }
-    // }
 
     size_t cnt = 0;
     for (size_t i = 0; i < numGroups; i++)
