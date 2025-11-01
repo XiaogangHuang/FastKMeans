@@ -23,7 +23,7 @@ void BVKmeans::setInitialCentroids(point_coord_type perc, const Matrix<point_coo
     centroids = initial_centroids;
     old_centroids = initial_centroids;
     numDistances = 0;
-}
+} 
 
 void BVKmeans::fit(const Matrix<point_coord_type> &data)
 {

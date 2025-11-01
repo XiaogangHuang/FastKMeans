@@ -21,7 +21,7 @@ void YinYangKmeans::setInitialCentroids(const Matrix<point_coord_type> &initial_
     old_centroids = initial_centroids;
     d = centroids[0].size();
 }
-
+ 
 void YinYangKmeans::fit(const Matrix<point_coord_type> &data)
 {
     auto start = std::chrono::high_resolution_clock::now();

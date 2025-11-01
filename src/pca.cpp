@@ -30,7 +30,7 @@ void determine_pca_dim_manual(std::vector<point_coord_type> &eigenvalues, size_t
     std::cout << std::endl;
     std::cin >> pca_dim;
     if (pca_dim > eigenvalues.size())
-    {
+    { 
         std::cerr << "Input error, pca_dim cannot be greater than the number of eigenvalues.。\n";
         return;
     }

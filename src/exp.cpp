@@ -14,7 +14,7 @@ void ExponionKmeans::setInitialCentroids(const Matrix<point_coord_type> &initial
 {
     // 初始化数据结构
     d = initial_centroids[0].size();
-
+ 
     centroids = initial_centroids;
     old_centroids = initial_centroids;
     partitionvalues_halvies.resize(k, std::vector<point_coord_type>(npartitions - 1));

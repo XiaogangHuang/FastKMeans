@@ -5,7 +5,7 @@ MarigoldKmeans::MarigoldKmeans(size_t _k, const Matrix<point_coord_type> &data, 
 {
     n = data.size();
     d = data[0].size();
-    k = _k;
+    k = _k; 
     data_ = data;
     centroids = initial_centroids;
     old_centroids = initial_centroids;

@@ -7,7 +7,7 @@ void HeapKmeans::fit()
     numDistances = 0;
     iterations = 0;
     while (!converged)
-    {
+    { 
         ++iterations;
         for (size_t h = 0; h < k; ++h)
         {

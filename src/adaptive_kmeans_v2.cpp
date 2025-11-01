@@ -1,5 +1,5 @@
 #include "adaptive_kmeans_v2.h"
-
+ 
 AdaptiveKmeansV2::AdaptiveKmeansV2(size_t k, size_t ub, size_t group_strategy)
     : k(k), iterations(1), numDistances(0), n(0), d(0)
 {

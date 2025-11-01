@@ -177,7 +177,7 @@ bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
                             if (old_label == ci || glowers_previous[gi] - div_center[ci] < group_second_nearest)
                             {
                                 numDistances++;
-                                adist = euclidean_dist(data[i], centroids[ci], point_normSquares[i], centroid_normSquares[ci]);
+                                adist = euclidean_dist_square(data[i], centroids[ci], point_normSquares[i], centroid_normSquares[ci]);
                                 feature_cnt += d;
                                 if (adist < group_nearest)
                                 {
@@ -191,6 +191,7 @@ bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
                                 }
                             }
                         }
+                        group_nearest = std::sqrt(group_nearest);
                         if (group[i] != gi)
                         {
                             if (group_nearest < points[i].distance)
@@ -203,7 +204,7 @@ bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
                                 {
                                     group_lowers[i][group[i]] = points[i].distance;
                                 }
-                                group_lowers[i][gi] = group_second_nearest;
+                                group_lowers[i][gi] = std::sqrt(group_second_nearest);;
                                 group[i] = gi;
                                 points[i].index = group_nearest_index;
                                 points[i].distance = group_nearest;
@@ -215,7 +216,7 @@ bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
                         }
                         else
                         {
-                            group_lowers[i][gi] = group_second_nearest;
+                            group_lowers[i][gi] = std::sqrt(group_second_nearest);;
                             points[i].distance = group_nearest;
                             points[i].index = group_nearest_index;
                         }

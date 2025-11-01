@@ -1,5 +1,5 @@
 #include "adaptive_kmeans_v2_dag.h"
-
+ 
 AdaptiveKmeansV2DAG::AdaptiveKmeansV2DAG(size_t k, size_t ub)
     : k(k), iterations(1), numDistances(0), n(0), d(0)
 {

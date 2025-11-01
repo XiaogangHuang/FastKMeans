@@ -178,7 +178,7 @@ bool HamerlyKmeans::recalculateCentroids()
 }
 
 void HamerlyKmeans::fit(const Matrix<point_coord_type> &data)
-{
+{ 
     // 更新数据集大小
     n = data.size();
 

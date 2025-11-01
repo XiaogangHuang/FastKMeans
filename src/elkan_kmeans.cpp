@@ -22,7 +22,7 @@ void ElkanKmeans::clear()
     centroids.clear();
     old_centroids.clear();
 }
-
+ 
 void ElkanKmeans::init(const Matrix<point_coord_type> &data)
 {
     n = data.size();
