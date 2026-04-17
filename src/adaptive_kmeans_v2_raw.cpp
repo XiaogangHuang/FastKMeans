@@ -174,7 +174,8 @@ bool AdaptiveKmeansV2Raw::assignPoints(const Matrix<point_coord_type> &data)
                         group_nearest_index = 0;
                         for (size_t ci = groupparts[gi]; ci < groupparts[gi + 1]; ci++)
                         {
-                            if (old_label == ci || glowers_previous[gi] - div_center[ci] < group_second_nearest)
+                            point_coord_type group_lower_ci = glowers_previous[gi] - div_center[ci];
+                            if (old_label == ci || group_lower_ci * group_lower_ci < group_second_nearest)
                             {
                                 numDistances++;
                                 adist = euclidean_dist_square(data[i], centroids[ci], point_normSquares[i], centroid_normSquares[ci]);
